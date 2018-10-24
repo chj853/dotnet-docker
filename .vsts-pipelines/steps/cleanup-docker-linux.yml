@@ -1,6 +1,6 @@
 parameters:
   cleanupRemoteDockerServer: false
-  excludeRunningContainers: false
+  usingMultiAgentHost: false
 
 steps:
   ################################################################################
@@ -15,13 +15,24 @@ steps:
   ################################################################################
   # Cleanup local Docker server
   ################################################################################
-- ${{ if and(eq(parameters.excludeRunningContainers, 'false'), eq(parameters.cleanupRemoteDockerServer, 'false')) }}:
-  # Multiple build agents run on a single host machine for remote Docker server scenarios.  Don't stop running containers.
+- ${{ if eq(parameters.usingMultiAgentHost, 'false') }}:
   - script: docker stop $(docker ps -q) || true
     displayName: Stop Running Containers
     condition: always()
     continueOnError: true
-- script: docker system prune -a -f --volumes
-  displayName: Cleanup Local Docker Server
-  condition: always()
-  continueOnError: true
+  - script: docker system prune -a -f --volumes
+    displayName: Cleanup Local Docker Server
+    condition: always()
+    continueOnError: true
+
+- ${{ if eq(parameters.usingMultiAgentHost, 'true') }}:
+  # Multiple build agents run on a single host machine for remote Docker server scenarios.
+  # Don't delete Docker assets that may be used by other build agents.
+  - script: docker system prune -f
+    displayName: Cleanup Local Docker Server Images and Containers
+    condition: always()
+    continueOnError: true
+  - script: docker volume rm -f $(repoVolume)
+    displayName: Cleanup Local Docker Server Volumes
+    condition: always()
+    continueOnError: true

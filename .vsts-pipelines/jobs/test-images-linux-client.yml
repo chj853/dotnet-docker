@@ -87,3 +87,4 @@ jobs:
   - template: ../steps/cleanup-docker-linux.yml
     parameters:
       cleanupRemoteDockerServer: ${{ parameters.useRemoteDockerServer }}
+      usingMultiAgentHost: ${{ parameters.useRemoteDockerServer }}
