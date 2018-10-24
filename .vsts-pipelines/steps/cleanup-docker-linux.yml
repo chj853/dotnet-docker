@@ -6,11 +6,11 @@ steps:
   ################################################################################
   # Cleanup remote Docker server
   ################################################################################
-- ${{ if eq(parameters.cleanupRemoteDockerServer, 'true') }}:
-  - script: docker run --rm $(dockerArmRunArgs) --entrypoint docker $(dockerClientImage) system prune -a -f --volumes
-    displayName: Cleanup Remote Docker Server
-    condition: always()
-    continueOnError: true
+# - ${{ if eq(parameters.cleanupRemoteDockerServer, 'true') }}:
+#   - script: docker run --rm $(dockerArmRunArgs) --entrypoint docker $(dockerClientImage) system prune -a -f --volumes
+#     displayName: Cleanup Remote Docker Server
+#     condition: always()
+#     continueOnError: true
 
   ################################################################################
   # Cleanup local Docker server
